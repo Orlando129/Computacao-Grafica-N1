@@ -129,14 +129,8 @@ Computação-Grafica-N1/
 ## 👨‍💻 Autor
 
 **Orlando129**
-- GitHub: [@Orlando129](https://github.com/Orlando129)
+- GitHub: [@Orlando129](https://github.com/Orlando129)(João)(Luiz)
 - Projeto: Computação Gráfica - Avaliação N1
-
-## 📚 Referências
-
-- Foley, J. D. et al. "Computer Graphics: Principles and Practice"
-- Hughes, J. F. et al. "Computer Graphics: Principles and Practice (3rd Edition)"
-- Matemática de Transformações 3D e Álgebra Linear
 
 ---
 
