@@ -29,7 +29,7 @@ Simulação de um pião executando movimentos compostos:
 ### 1. Clone o repositório
 ```bash
 git clone https://github.com/Orlando129/Computacao-Grafica-N1.git
-cd Computa-o-Grafica-N1
+cd Computacao-Grafica-N1
 ```
 
 ### 2. Crie um ambiente virtual (recomendado)
