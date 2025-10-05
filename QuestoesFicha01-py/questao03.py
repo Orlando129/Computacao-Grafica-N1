@@ -1,13 +1,3 @@
-"""
-Questão 3 - Animação de Pião com Rotações Compostas
-Computação Gráfica
-
-Problema:
-- Pião com bico inicialmente em (1,2,0)
-- Gira 4 voltas em torno do eixo r = {(x,y,z) | x = 1+q, y = 2-q, z = 0} a cada t segundos
-- Eixo r gira 1 volta em torno do eixo s = {(x,y,z) | x = 2, y = 1} a cada t segundos
-"""
-
 import numpy as np
 import pygame
 import math
@@ -123,8 +113,10 @@ class PiaoAnimator:
     
     def projetar_3d_para_2d(self, ponto_3d):
         """Projeta ponto 3D para 2D (projeção ortográfica)"""
-        x = int(ponto_3d[0] * self.scale + self.offset_x)
-        y = int(-ponto_3d[1] * self.scale + self.offset_y)  # Inverter Y
+        # Ajustando offsets para centralizar o pião na tela
+        # Subtrai a posição média do movimento (aproximadamente 1.5, 1.5) multiplicada pela escala
+        x = int((ponto_3d[0] - 1.5) * self.scale + self.offset_x)
+        y = int(-(ponto_3d[1] - 1.5) * self.scale + self.offset_y)  # Inverter Y
         return (x, y)
     
     def desenhar_eixos(self, screen, M2):
@@ -245,7 +237,7 @@ def main():
         legenda = [
             "Azul: Eixo s (x=2, y=1)",
             "Verde: Eixo r (rotaciona)",
-            "Vermelho: Pião (maior e mais visível)",
+            "Vermelho: Pião",
             "Amarelo/Ciano: Orientação do pião",
             "ESC: Sair | ESPAÇO: Matrizes"
         ]
