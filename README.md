@@ -2,6 +2,12 @@
 
 Este projeto contém implementações de simulações interativas em Python usando NumPy e Pygame para demonstrar conceitos de transformações 3D e operadores afins.
 
+## 👨‍💻 Autor
+
+**Luiz Belispetre, João Lucas Camilo, Orlando Telles da Silva Batista**
+- GitHub: [@Luiz](https://github.com/K4L1B3), [@João](https://github.com/joaolucascamilo), [@Orlando](https://github.com/Orlando129)
+- Projeto: Computação Gráfica - Avaliação N1
+
 ## 🛠️ Pré-requisitos
 
 - **Python 3.7+**
@@ -132,12 +138,6 @@ Computação-Grafica-N1/
 
 - **NumPy 2.3.3**: Operações matriciais e cálculos numéricos
 - **Pygame 2.6.1**: Interface gráfica e animações
-
-## 👨‍💻 Autor
-
-**Luiz Belispetre, João Lucas Camilo,Orlando Telles da Silva Batista**
-- GitHub: [@Luiz](https://github.com/K4L1B3)[@João](https://github.com/joaolucascamilo)[@Orlando](https://github.com/Orlando129)
-- Projeto: Computação Gráfica - Avaliação N1
 
 ---
 
