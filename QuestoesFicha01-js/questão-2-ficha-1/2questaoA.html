@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Sanidade WebGL + Arco A→B (30°)</title>
+  <style>
+    html, body { height:100%; margin:0; background:#0b1020; color:#e6edf3; font-family: system-ui, sans-serif; }
+    #hud { position:fixed; top:10px; left:10px; z-index:10; display:flex; gap:8px; }
+    .panel { padding:8px 10px; background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.18); border-radius:8px; font-size:13px; line-height:1.35; }
+    #err { color:#ffd3d3; max-width:42vw; white-space:pre-wrap }
+    canvas { display:block; }
+  </style>
+  <!-- Three.js (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+</head>
+<body>
+<div id="hud">
+  <div class="panel" id="info"><b>Teste:</b> Cubo girando • <b>Arco:</b> A→B centrado em C (marcos 30°)</div>
+  <div class="panel" id="stats">fps: —</div>
+  <div class="panel" id="err" style="display:none"></div>
+</div>
+<canvas id="c"></canvas>
+
+<script>
+(function(){
+  // -------- util debug --------
+  const E = (id)=>document.getElementById(id);
+  function showErr(msg){
+    const el = E('err');
+    el.style.display='block';
+    el.textContent = String(msg);
+    console.error(msg);
+  }
+
+  // -------- renderer --------
+  const canvas = document.getElementById('c');
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
+  } catch (e) {
+    showErr('Falha ao criar WebGLRenderer: ' + e);
+    return;
+  }
+  const gl = renderer.getContext();
+  if (!gl) { showErr('Contexto WebGL não disponível.'); return; }
+
+  // -------- cena/câmera/luz --------
+  const scene  = new THREE.Scene();
+  scene.background = new THREE.Color(0x0b1020);
+  const camera = new THREE.PerspectiveCamera(55, 2, 0.1, 1000);
+  camera.position.set(10, 8, 14);
+  const amb = new THREE.AmbientLight(0xffffff, 0.8); scene.add(amb);
+  const dir = new THREE.DirectionalLight(0xffffff, 0.9); dir.position.set(6,12,8); scene.add(dir);
+
+  // grupo exclusivo do ARCO (tudo relacionado ao arco entra aqui)
+  const arcGroup = new THREE.Group();
+  scene.add(arcGroup);
+
+  // eixos (só referência geral)
+  scene.add(new THREE.AxesHelper(4));
+
+  // -------- 1) CUBO GIRANDO (sanidade) --------
+  // Só pra dizer que tem animação realmente rsrs...
+  const cube = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2,1.2,1.2),
+    new THREE.MeshStandardMaterial({ color:0x8ad1ff, metalness:0.1, roughness:0.5 })
+  );
+  cube.position.set(-3, 0.8, 0);
+  scene.add(cube);
+
+  // -------- 2) ARCO A→B --------
+  const A = new THREE.Vector3( 2,-2,-3 );
+  const B = new THREE.Vector3( 2, 1, 0 );
+  const C = new THREE.Vector3( 0,-1,-1 );
+  const u = A.clone().sub(C);
+  const v = B.clone().sub(C);
+  const theta = u.angleTo(v);            // ~ 90°
+  const k = new THREE.Vector3().crossVectors(u, v).normalize();
+
+  function rotAxisThroughPoint(axis, angleRad, point){
+    const R  = new THREE.Matrix4().makeRotationAxis(axis.clone().normalize(), angleRad);
+    const T  = new THREE.Matrix4().makeTranslation(point.x, point.y, point.z);
+    const Ti = new THREE.Matrix4().makeTranslation(-point.x,-point.y,-point.z);
+    return new THREE.Matrix4().multiplyMatrices(T, new THREE.Matrix4().multiplyMatrices(R, Ti));
+  }
+  const deg2rad = d=>d*Math.PI/180;
+
+  function ball(p, color, r){
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 24, 16),
+      new THREE.MeshStandardMaterial({ color, metalness:0.05, roughness:0.5 })
+    );
+    m.position.copy(p); 
+    arcGroup.add(m); 
+    return m;
+  }
+
+  // marca C, A, B
+  ball(C, 0xffffff, 0.10);
+  ball(A, 0x00ff88, 0.11);
+  ball(B, 0xff4488, 0.11);
+
+  // curva do arco
+  const pts = []; const S=128;
+  for(let i=0;i<=S;i++){
+    const ang = theta*(i/S);
+    const H = rotAxisThroughPoint(k, ang, C);
+    pts.push(A.clone().applyMatrix4(H));
+  }
+  const arc = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color:0x22aaff })
+  );
+  arcGroup.add(arc);
+
+  // checkpoints 30°,60°,90°
+  [30,60,90].forEach(d=>{
+    const H = rotAxisThroughPoint(k, deg2rad(d), C);
+    const p = A.clone().applyMatrix4(H);
+    ball(p, 0x88c0ff, 0.07);
+  });
+
+  // partícula
+  const particle = ball(A, 0xffff00, 0.13);
+
+  // -------- função de enquadramento de um objeto/grupo --------
+  function frameObject(obj, padding = 1.2) {
+    const box = new THREE.Box3().setFromObject(obj);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+
+    const maxSize = Math.max(size.x, size.y, size.z);
+    const fitHeight = maxSize / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)));
+    const fitWidth  = fitHeight / camera.aspect;
+    const distance  = padding * Math.max(fitHeight, fitWidth);
+
+    // posiciona a câmera numa diagonal, acima do plano do arco
+    camera.position.set(center.x + distance, center.y + distance * 0.6, center.z + distance);
+    camera.lookAt(center);
+  }
+
+  // -------- resize --------
+  function resize(){
+    const w = window.innerWidth || 800, h = window.innerHeight || 600;
+    camera.aspect = w/h; 
+    camera.updateProjectionMatrix();
+    renderer.setSize(w,h,false);
+  }
+  window.addEventListener('resize', ()=>{ resize(); frameObject(arcGroup, 1.25); });
+  resize();
+
+  // enquadra o ARCO (ignora o cubo)
+  frameObject(arcGroup, 1.25);
+
+  // -------- loop --------
+  const clock = new THREE.Clock();
+  const duration = 6.0;
+  const omega = theta/duration;
+  let t=0;
+  let frames=0, acc=0;
+
+  function frame(){
+    const dt = clock.getDelta();
+
+    // cubo gira sempre (sanidade)
+    cube.rotation.x += dt*0.8;
+    cube.rotation.y += dt*1.0;
+
+    // partícula caminha até B
+    t = Math.min(t+dt, duration);
+    const ang = omega*t;
+    const H = rotAxisThroughPoint(k, ang, C);
+    const P = A.clone().applyMatrix4(H);
+    particle.position.copy(P);
+
+    // stats simples
+    frames++; acc += dt;
+    if(acc >= 0.5){
+      const fps = Math.round(frames/acc);
+      E('stats').textContent = 'fps: ' + fps + (t>=duration ? ' • (partícula chegou em B)' : '');
+      frames=0; acc=0;
+    }
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // -------- logs úteis --------
+  console.log('WebGL:', gl.getParameter(gl.VERSION));
+  console.log('Renderer:', gl.getParameter(gl.RENDERER));
+  console.log('theta (deg) ≈', THREE.MathUtils.radToDeg(theta).toFixed(3));
+})();
+</script>
+</body>
+</html>
