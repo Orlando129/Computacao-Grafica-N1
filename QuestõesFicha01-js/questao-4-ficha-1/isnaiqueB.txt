@@ -1,0 +1,12 @@
+a gente faz os planos A e B girarem junto do eixo D,
+ o A gira num sentido, o B gira no sentido contrário,
+  ambos com a mesma velocidade (±ω). pra cada plano, 
+  guardamos: - uma normal - um pontinho do plano e 
+  giramos esses dois em volta de D a cada frame com 
+  isso o plano “anda” no tempo e para gente saber se 
+  o isnaique cruzou A ou B, em vez de usar a equação 
+  fixa do plano, a gente mede na hora a "distancia 
+  com sinal", até o plano que está girando, se o 
+  sinal mudar de positivo para negativo ou vice e 
+  versa, cruzou e ao cruzar , nada muda na regra: 
+  a serpente refleto no plano C e continua a espiral
