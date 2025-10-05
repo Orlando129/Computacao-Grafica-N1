@@ -1,6 +1,6 @@
 # Computação Gráfica - N1
 
-Este projeto contém implementações de simulações interativas em Python usando NumPy e Pygame para demonstrar conceitos de transformações 3D e operadores afins.
+Este projeto contém implementações de simulações interativas utilizando diferentes tecnologias (Python/Pygame, Three.js e Processing) para demonstrar conceitos de computação gráfica, incluindo transformações 3D, operadores afins e animações interativas.
 
 ## 👨‍💻 Autor
 
@@ -136,8 +136,17 @@ Computação-Grafica-N1/
 
 ## 🔧 Dependências
 
+### Python (Questões 01 e 03 - Ficha 01)
 - **NumPy 2.3.3**: Operações matriciais e cálculos numéricos
 - **Pygame 2.6.1**: Interface gráfica e animações
+
+### Three.js (Questões 02 e 04 - Ficha 01)
+- **Three.js**: Biblioteca JavaScript para renderização 3D (incluída via CDN nos arquivos HTML)
+- **Servidor HTTP**: Node.js com http-server ou Python SimpleHTTPServer
+
+### Processing (Ficha 02)
+- **Processing IDE**: Ambiente de desenvolvimento para linguagem Processing
+- **processing-java**: CLI para execução via linha de comando (opcional)
 
 ---
 
