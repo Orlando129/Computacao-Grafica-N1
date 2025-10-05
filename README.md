@@ -2,10 +2,12 @@
 
 Este projeto contém implementações de simulações interativas utilizando diferentes tecnologias (Python/Pygame, Three.js e Processing) para demonstrar conceitos de computação gráfica, incluindo transformações 3D, operadores afins e animações interativas.
 
-## 👨‍💻 Autor
+## 👨‍💻 Autores
 
 **Luiz Belispetre, João Lucas Camilo, Orlando Telles da Silva Batista**
-- GitHub: [@Luiz](https://github.com/K4L1B3), [@João](https://github.com/joaolucascamilo), [@Orlando](https://github.com/Orlando129)
+- GitHub: [@Luiz](https://github.com/K4L1B3)
+          [@João](https://github.com/joaolucascamilo)
+          [@Orlando](https://github.com/Orlando129)
 - Projeto: Computação Gráfica - Avaliação N1
 
 ## � Avaliação e Pesos
@@ -52,10 +54,10 @@ pip install -r requirements.txt
 #### Questões da Ficha 01 (Python - Questões 01 e 03)
 ```bash
 # Questão 1
-python QuestõesFicha01/questao01/questao01.py
+python QuestoesFicha01-py/questao01.py
 
 # Questão 3
-python QuestõesFicha01/questao03/questao03.py
+python QuestoesFicha01-py/questao03.py
 ```
 
 #### Questões da Ficha 01 (Three.js - Questões 02 e 04)
@@ -69,7 +71,7 @@ python QuestõesFicha01/questao03/questao03.py
 
 2. Navegue até a pasta do projeto:
    ```bash
-   cd QuestõesFicha01
+   cd QuestoesFicha01-js
    ```
 
 3. Inicie o servidor HTTP:
@@ -83,15 +85,13 @@ python QuestõesFicha01/questao03/questao03.py
    ```
 
 4. Abra o navegador e acesse:
-   - **Questão 2A**: http://localhost:5500/questao02/2questaoA.html
-   - **Questão 2B**: http://localhost:5500/questao02/2questaoB.html
-   - **Questão 2C**: http://localhost:5500/questao02/2questaoC.html
-   - **Questão 4**: http://localhost:5500/questao04/isnaiqueA.html
+   - **Questão 2**: http://localhost:5500/questão-2-ficha-1/
+   - **Questão 4**: http://localhost:5500/questao-4-ficha-1/
 
 **Método 2: Servidor Python (Alternativa)**
 
 ```bash
-cd QuestõesFicha01
+cd QuestoesFicha01-js
 python -m http.server 5500
 ```
 
@@ -99,46 +99,43 @@ Depois acesse: http://localhost:5500
 
 #### Questões da Ficha 02 (Processing)
 Abra os arquivos `.pde` no Processing IDE:
-- **Questão 1**: `QuestõesFicha02/questao01/bola_quicando.pde`
-- **Questão 2**: `QuestõesFicha02/questao02/braco_antebraco.pde`
-- **Questão 3**: `QuestõesFicha02/questao03/circulo.pde`
+- **Questão 1**: `QuestoesFicha02-jar/questao01/`
+- **Questão 2**: `QuestoesFicha02-jar/questao02/`
+- **Questão 3**: `QuestoesFicha02-jar/questao03/`
 
 Ou execute via linha de comando (se o Processing estiver no PATH):
 ```bash
 # Questão 1
-processing-java --sketch=QuestõesFicha02/questao01 --run
+processing-java --sketch=QuestoesFicha02-jar/questao01 --run
 
 # Questão 2
-processing-java --sketch=QuestõesFicha02/questao02 --run
+processing-java --sketch=QuestoesFicha02-jar/questao02 --run
 
 # Questão 3
-processing-java --sketch=QuestõesFicha02/questao03 --run
+processing-java --sketch=QuestoesFicha02-jar/questao03 --run
 ```
 
 ## 📊 Estrutura do Projeto
 
 ```
 Computação-Grafica-N1/
-├── QuestõesFicha01/
-│   ├── questao01/
-│   │   └── questao01.py      # Operadores afins com cubo
-│   ├── questao02/
-│   │   ├── 2questaoA.html    # Rotação em torno de arco
-│   │   ├── 2questaoB.html    # Transformações em sequência
-│   │   └── 2questaoC.html    # Reflexão e rotação
-│   ├── questao03/
-│   │   └── questao03.py      # Animação do pião
-│   └── questao04/
-│       └── isnaiqueA.html    # Projeto Three.js
-├── QuestõesFicha02/
-│   ├── questao01/
-│   │   └── bola_quicando.pde # Animação de bola quicando
-│   ├── questao02/
-│   │   └── braco_antebraco.pde # Simulação de braço e antebraço
-│   └── questao03/
-│       └── circulo.pde       # Animação de círculo
-├── requirements.txt          # Dependências do projeto
-└── README.md                # Este arquivo
+├── QuestoesFicha01-py/          # Questões Python da Ficha 01
+│   ├── questao01.py             # Operadores afins com cubo
+│   ├── questao03.py             # Animação do pião
+│   └── how-to.md                # Instruções de execução
+├── QuestoesFicha01-js/          # Questões Three.js da Ficha 01
+│   ├── questão-2-ficha-1/       # Questão 2 (A, B, C)
+│   ├── questao-4-ficha-1/       # Questão 4
+│   └── how-to.md                # Instruções de execução
+├── QuestoesFicha02-jar/         # Questões Processing da Ficha 02
+│   ├── questao01/               # Animação de bola quicando
+│   ├── questao02/               # Simulação de braço e antebraço
+│   ├── questao03/               # Animação de círculo
+│   └── how-to.md                # Instruções de execução
+├── venv/                        # Ambiente virtual Python
+├── requirements.txt             # Dependências Python
+├── .gitignore                   # Arquivos ignorados pelo Git
+└── README.md                    # Este arquivo
 ```
 
 ## 🔧 Dependências
