@@ -8,7 +8,14 @@ Este projeto contém implementações de simulações interativas utilizando dif
 - GitHub: [@Luiz](https://github.com/K4L1B3), [@João](https://github.com/joaolucascamilo), [@Orlando](https://github.com/Orlando129)
 - Projeto: Computação Gráfica - Avaliação N1
 
-## 🛠️ Pré-requisitos
+## � Avaliação e Pesos
+
+### Distribuição de Notas
+- **Ficha 01**: 40% da nota final
+- **Ficha 02**: 60% da nota final
+- **Questão 04**: Possui menor peso entre as questões da Ficha 01
+
+## �🛠️ Pré-requisitos
 
 - **Python 3.7+**
 - **pip** (gerenciador de pacotes Python)
