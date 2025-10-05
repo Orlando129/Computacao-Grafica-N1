@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Questão B — Rot(30°) → Escala (3,−2,0.5) → Trans (1,−2,−3)</title>
+  <style>
+    html, body { height:100%; margin:0; background:#0b1020; color:#e6edf3; font-family: system-ui, sans-serif; }
+    canvas { display:block; }
+    #hud{ position:fixed; top:10px; left:10px; z-index:10; display:grid; gap:8px; grid-template-columns: 1fr; max-width: 92vw;}
+    .card{ background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.18); border-radius:10px; padding:10px 12px; font-size:13px; line-height:1.35; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; overflow:auto; max-height: 24vh;}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .tag{ padding:2px 6px; border-radius:6px; background:#24314d; border:1px solid #334; font-size:12px;}
+    .btn{ background:#1b2336; color:#e6edf3; border:1px solid #334; border-radius:8px; padding:6px 10px; cursor:pointer;}
+    .btn:hover{ background:#24314d; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+</head>
+<body>
+<div id="hud">
+  <div class="card">
+    <div class="row">
+      <span class="tag"><b>Questão B</b></span>
+      Rot(30°) eixo dir (1,−1,1) por P₀=(−1,1,0) → Escala (3,−2,0.5) → Trans (1,−2,−3)
+      <button class="btn" id="btnPlay">Reiniciar animação</button>
+    </div>
+  </div>
+  <div class="card mono" id="mat-rot"></div>
+  <div class="card mono" id="mat-scale"></div>
+  <div class="card mono" id="mat-trans"></div>
+  <div class="card mono" id="mat-final"></div>
+  <div class="card mono" id="mat-current"></div>
+</div>
+<canvas id="c"></canvas>
+
+<script>
+(function(){
+  // ===== cena básica =====
+  const canvas = document.getElementById('c');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0b1020);
+  const camera = new THREE.PerspectiveCamera(55, 2, 0.1, 1000); camera.position.set(6,5,9);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+  const dl = new THREE.DirectionalLight(0xffffff, 0.9); dl.position.set(6,12,8); scene.add(dl);
+  scene.add(new THREE.AxesHelper(4));
+
+  // ===== dados da Q.B =====
+  const axisDir = new THREE.Vector3(1,-1,1).normalize();
+  const P0 = new THREE.Vector3(-1,1,0);
+  const angle30 = THREE.MathUtils.degToRad(30);
+  const Sx=3, Sy=-2, Sz=0.5;
+  const Tx=1, Ty=-2, Tz=-3;
+
+  // ===== util de matrizes =====
+  function H_rotation(axis, angleRad, point){
+    const R  = new THREE.Matrix4().makeRotationAxis(axis.clone().normalize(), angleRad);
+    const T  = new THREE.Matrix4().makeTranslation(point.x, point.y, point.z);
+    const Ti = new THREE.Matrix4().makeTranslation(-point.x,-point.y,-point.z);
+    return new THREE.Matrix4().multiplyMatrices(T, new THREE.Matrix4().multiplyMatrices(R, Ti)); // T · R · T⁻¹
+  }
+  function H_scale(sx,sy,sz){ return new THREE.Matrix4().makeScale(sx,sy,sz); }
+  function H_trans(tx,ty,tz){ return new THREE.Matrix4().makeTranslation(tx,ty,tz); }
+  function matToString(m){
+    const e=m.elements, get=(r,c)=>e[c*4+r]; let out='';
+    for(let r=0;r<4;r++){ const row=[]; for(let c=0;c<4;c++) row.push((get(r,c)).toFixed(3).padStart(9)); out+='[ '+row.join(' ')+' ]\n'; }
+    return out;
+  }
+
+  // ===== matrizes exatas da questão (constantes) =====
+  const H_rot = H_rotation(axisDir, angle30, P0);
+  const H_s   = H_scale(Sx,Sy,Sz);
+  const H_t   = H_trans(Tx,Ty,Tz);
+  const H_final = new THREE.Matrix4().multiplyMatrices(H_t, new THREE.Matrix4().multiplyMatrices(H_s, H_rot));
+
+  // HUD fixo:
+  mat('mat-rot',   'H_rot = T(P₀) · R_axis(30°) · T(−P₀)\n', H_rot);
+  mat('mat-scale', 'H_s   = diag(3, −2, 0.5, 1)\n',          H_s);
+  mat('mat-trans', 'H_t   = T(1, −2, −3)\n',                 H_t);
+  mat('mat-final', 'H_final = H_t · H_s · H_rot\n',          H_final);
+
+  function mat(id, title, M){ document.getElementById(id).textContent = title + matToString(M); }
+
+  // ===== figura original (verde) =====
+  const squareOrig = new THREE.Mesh(
+    new THREE.PlaneGeometry(1,1),
+    new THREE.MeshStandardMaterial({ color:0x5BFFB5, side:THREE.DoubleSide, roughness:0.7 })
+  );
+  scene.add(squareOrig);
+
+  // ===== figura animada (amarelo) =====
+  const squareX = new THREE.Mesh(
+    new THREE.PlaneGeometry(1,1),
+    new THREE.MeshStandardMaterial({ color:0xFFD166, side:THREE.DoubleSide, roughness:0.7 })
+  );
+  scene.add(squareX);
+
+  // reta-eixo visual
+  (function(){
+    const len=6;
+    const pA=P0.clone().add(axisDir.clone().multiplyScalar(-len));
+    const pB=P0.clone().add(axisDir.clone().multiplyScalar(+len));
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([pA,pB]),
+                             new THREE.LineBasicMaterial({ color:0xcccccc })));
+    const marker=new THREE.Mesh(new THREE.SphereGeometry(0.07,24,16),
+                    new THREE.MeshStandardMaterial({ color:0xffffff }));
+    marker.position.copy(P0); scene.add(marker);
+  })();
+
+  // ===== enquadrar =====
+  function resize(){ const w=innerWidth,h=innerHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false); }
+  function frameAll(pad=1.35){
+    const box=new THREE.Box3().setFromObject(scene);
+    const size=box.getSize(new THREE.Vector3()), center=box.getCenter(new THREE.Vector3());
+    const maxSize=Math.max(size.x,size.y,size.z);
+    const fitH=maxSize/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov*0.5)));
+    const fitW=fitH/camera.aspect;
+    const d=pad*Math.max(fitH,fitW);
+    camera.position.set(center.x+d, center.y+d*0.6, center.z+d);
+    camera.lookAt(center);
+  }
+  addEventListener('resize', ()=>{ resize(); frameAll(); });
+  resize(); frameAll();
+
+  // ===== animação em 3 fases =====
+  const T1=3.0, T2=3.0, T3=3.0, Ttot=T1+T2+T3;
+  const clock = new THREE.Clock(); let t=0;
+  function reset(){ t=0; squareX.matrix.identity(); squareX.matrixAutoUpdate=true; }
+  document.getElementById('btnPlay').onclick = reset; reset();
+
+  function loop(){
+    const dt = clock.getDelta(); t = (t+dt) % Ttot;
+
+    // progressos de cada fase:
+    const p1 = Math.min(t/T1, 1.0);
+    const p2 = Math.min(Math.max((t-T1)/T2, 0), 1.0);
+    const p3 = Math.min(Math.max((t-T1-T2)/T3, 0), 1.0);
+
+    // R(θ(t))
+    const theta = angle30 * p1;
+    const Hrot_t = H_rotation(axisDir, theta, P0);
+
+    // S(t): interpola de 1→alvo (linear)
+    const sx = 1 + (Sx-1)*p2;
+    const sy = 1 + (Sy-1)*p2;
+    const sz = 1 + (Sz-1)*p2;
+    const Hs_t = H_scale(sx,sy,sz);
+
+    // T(t): 0→alvo
+    const tx = Tx*p3, ty = Ty*p3, tz = Tz*p3;
+    const Ht_t = H_trans(tx,ty,tz);
+
+    // H(t) = T(t) · S(t) · Hrot(t)
+    const H_cur = new THREE.Matrix4().multiplyMatrices(Ht_t, new THREE.Matrix4().multiplyMatrices(Hs_t, Hrot_t));
+
+    // aplica no quadrado
+    squareX.matrixAutoUpdate = false;
+    squareX.matrix.copy(H_cur);
+
+    // HUD da matriz corrente
+    document.getElementById('mat-current').textContent = 'H(t) atual\n' + matToString(H_cur);
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
