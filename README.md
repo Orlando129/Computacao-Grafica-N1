@@ -1,28 +1,14 @@
 # Computação Gráfica - N1
 
-Este projeto contém as implementações das questões de Computação Gráfica sobre operadores afins e transformações 3D.
-
-## 📋 Descrição do Projeto
-
-O projeto implementa simulações interativas em Python usando NumPy e Pygame para demonstrar conceitos fundamentais de computação gráfica:
-
-### Questão 1 - Operadores Afins Notórios
-Implementação de três operadores afins fundamentais:
-- **A)** Rotação em torno de uma reta `s = {(x,y,z) | x=2 e y=1}`
-- **B)** Reflexão em relação ao plano `C = {(x,y,z) | (0,1,0) + q(-2,4,-2) + p(-1,-1,1)}`
-- **C)** Rotação helicoidal em torno da reta `D = (-t, 1-t, t)` com fator de translação `2/π`
-- Composição final: **C∘B∘A** aplicada a um cubo unitário
-
-### Questão 3 - Animação de Pião com Movimento Composto
-Simulação de um pião executando movimentos compostos:
-- Pião inicia com bico em `(1,2,0)`
-- Gira **4 voltas** em torno do eixo `r = {(x,y,z) | x=1+q, y=2-q, z=0}` a cada período `t`
-- Eixo `r` gira **1 volta** em torno do eixo `s = {(x,y,z) | x=2, y=1}` a cada período `t`
+Este projeto contém implementações de simulações interativas em Python usando NumPy e Pygame para demonstrar conceitos de transformações 3D e operadores afins.
 
 ## 🛠️ Pré-requisitos
 
 - **Python 3.7+**
 - **pip** (gerenciador de pacotes Python)
+- **Node.js** (para servidor HTTP local - questões Three.js)
+- **Processing** (para executar as questões da Ficha 02)
+- **Navegador moderno** com suporte a WebGL
 
 ## 🚀 Instalação e Execução
 
@@ -48,78 +34,99 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Execute as questões
+### 4. Execute o projeto
 
-#### Questão 1 - Operadores Afins
+#### Questões da Ficha 01 (Python - Questões 01 e 03)
 ```bash
-python QuestõesFicha01/questao01.py
+# Questão 1
+python QuestõesFicha01/questao01/questao01.py
+
+# Questão 3
+python QuestõesFicha01/questao03/questao03.py
 ```
 
-#### Questão 3 - Animação do Pião
+#### Questões da Ficha 01 (Three.js - Questões 02 e 04)
+
+**Método 1: Servidor HTTP Local (Recomendado)**
+
+1. Instale o http-server globalmente (se ainda não instalado):
+   ```bash
+   npm install -g http-server
+   ```
+
+2. Navegue até a pasta do projeto:
+   ```bash
+   cd QuestõesFicha01
+   ```
+
+3. Inicie o servidor HTTP:
+   ```bash
+   npx http-server -p 5500
+   ```
+   
+   Ou se instalado globalmente:
+   ```bash
+   http-server -p 5500
+   ```
+
+4. Abra o navegador e acesse:
+   - **Questão 2A**: http://localhost:5500/questao02/2questaoA.html
+   - **Questão 2B**: http://localhost:5500/questao02/2questaoB.html
+   - **Questão 2C**: http://localhost:5500/questao02/2questaoC.html
+   - **Questão 4**: http://localhost:5500/questao04/isnaiqueA.html
+
+**Método 2: Servidor Python (Alternativa)**
+
 ```bash
-python QuestõesFicha01/questao03.py
+cd QuestõesFicha01
+python -m http.server 5500
 ```
 
-## 🎮 Controles das Simulações
+Depois acesse: http://localhost:5500
 
-### Questão 1 - Operadores Afins
-- **ESPAÇO**: Play/Pause da animação
-- **R**: Reset da animação
-- **S**: Mostrar/ocultar etapas intermediárias
-- **M**: Imprimir matrizes dos operadores no console
-- **ESC**: Sair da aplicação
+#### Questões da Ficha 02 (Processing)
+Abra os arquivos `.pde` no Processing IDE:
+- **Questão 1**: `QuestõesFicha02/questao01/bola_quicando.pde`
+- **Questão 2**: `QuestõesFicha02/questao02/braco_antebraco.pde`
+- **Questão 3**: `QuestõesFicha02/questao03/circulo.pde`
 
-### Questão 3 - Animação do Pião
-- **ESPAÇO**: Mostrar/ocultar matrizes no console
-- **ESC**: Sair da aplicação
+Ou execute via linha de comando (se o Processing estiver no PATH):
+```bash
+# Questão 1
+processing-java --sketch=QuestõesFicha02/questao01 --run
+
+# Questão 2
+processing-java --sketch=QuestõesFicha02/questao02 --run
+
+# Questão 3
+processing-java --sketch=QuestõesFicha02/questao03 --run
+```
 
 ## 📊 Estrutura do Projeto
 
 ```
 Computação-Grafica-N1/
 ├── QuestõesFicha01/
-│   ├── questao01.py          # Operadores afins com cubo
-│   └── questao03.py          # Animação do pião
+│   ├── questao01/
+│   │   └── questao01.py      # Operadores afins com cubo
+│   ├── questao02/
+│   │   ├── 2questaoA.html    # Rotação em torno de arco
+│   │   ├── 2questaoB.html    # Transformações em sequência
+│   │   └── 2questaoC.html    # Reflexão e rotação
+│   ├── questao03/
+│   │   └── questao03.py      # Animação do pião
+│   └── questao04/
+│       └── isnaiqueA.html    # Projeto Three.js
+├── QuestõesFicha02/
+│   ├── questao01/
+│   │   └── bola_quicando.pde # Animação de bola quicando
+│   ├── questao02/
+│   │   └── braco_antebraco.pde # Simulação de braço e antebraço
+│   └── questao03/
+│       └── circulo.pde       # Animação de círculo
 ├── requirements.txt          # Dependências do projeto
-├── venv/                    # Ambiente virtual
-└── README.md               # Este arquivo
+└── README.md                # Este arquivo
 ```
-
-## 🔬 Detalhes Técnicos
-
-### Questão 1
-- **Matemática**: Implementa operadores afins usando coordenadas homogêneas 4x4
-- **Visualização**: Cubo unitário submetido às transformações
-- **Composição**: Demonstra a ordem correta de aplicação das transformações
-- **Matrizes**: Exibe as matrizes de transformação no console
-
-### Questão 3
-- **Transformações Compostas**: Rotações em torno de eixos arbitrários
-- **Matriz de Rodrigues**: Para rotações em torno de eixos não-canônicos
-- **Animação em Tempo Real**: 60 FPS com visualização suave
-- **Física**: Movimento composto com múltiplas rotações simultâneas
-
-## 🧮 Conceitos Matemáticos Implementados
-
-1. **Coordenadas Homogêneas**: Sistema 4x4 para transformações afins
-2. **Matriz de Rodrigues**: Rotação em torno de eixo arbitrário
-3. **Composição de Transformações**: Multiplicação de matrizes na ordem correta
-4. **Reflexão em Planos**: Usando vetores normais e produto escalar
-5. **Rotação Helicoidal**: Combinação de rotação e translação
-6. **Projeção 3D→2D**: Para visualização em tela
-
-## 📈 Saídas do Programa
-
-### Console
-- Matrizes de transformação 4x4 em coordenadas homogêneas
-- Informações sobre ângulos e posições em tempo real
-- Debug de operações matemáticas
-
-### Visualização
-- Animações interativas em tempo real
-- Objetos 3D projetados em 2D
-- Interface com informações dinâmicas
-- Controles visuais e legendas
 
 ## 🔧 Dependências
 
@@ -128,8 +135,8 @@ Computação-Grafica-N1/
 
 ## 👨‍💻 Autor
 
-**Orlando129**
-- GitHub: [@Orlando129](https://github.com/Orlando129)(João)(Luiz)
+**Luiz Belispetre, João Lucas Camilo,Orlando Telles da Silva Batista**
+- GitHub: [@Luiz](https://github.com/K4L1B3)[@João](https://github.com/joaolucascamilo)[@Orlando](https://github.com/Orlando129)
 - Projeto: Computação Gráfica - Avaliação N1
 
 ---

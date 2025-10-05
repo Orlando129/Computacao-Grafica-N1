@@ -34,7 +34,9 @@ class PiaoAnimator:
         self.piao_inicial = np.array([1.0, 2.0, 0.0, 1.0])  # Coordenadas homogêneas
         
         # Escala para visualização
-        self.scale = 150  # Aumentado para melhor visualização
+        self.scale = 100  # Escala ajustada para centralização
+        # Centralizar em torno do ponto médio entre eixo s (2,1) e origem
+        self.center_world = np.array([1.5, 1.5, 0.0])  # Centro do sistema no mundo 3D
         self.offset_x = WINDOW_WIDTH // 2
         self.offset_y = WINDOW_HEIGHT // 2
         
@@ -122,9 +124,10 @@ class PiaoAnimator:
         return M_total, M1, M2
     
     def projetar_3d_para_2d(self, ponto_3d):
-        """Projeta ponto 3D para 2D (projeção ortográfica)"""
-        x = int(ponto_3d[0] * self.scale + self.offset_x)
-        y = int(-ponto_3d[1] * self.scale + self.offset_y)  # Inverter Y
+        """Projeta ponto 3D para 2D (projeção ortográfica centralizada)"""
+        # Subtrair o centro do mundo para centralizar a visualização
+        x = int((ponto_3d[0] - self.center_world[0]) * self.scale + self.offset_x)
+        y = int(-(ponto_3d[1] - self.center_world[1]) * self.scale + self.offset_y)  # Inverter Y
         return (x, y)
     
     def desenhar_eixos(self, screen, M2):
@@ -245,7 +248,7 @@ def main():
         legenda = [
             "Azul: Eixo s (x=2, y=1)",
             "Verde: Eixo r (rotaciona)",
-            "Vermelho: Pião (maior e mais visível)",
+            "Vermelho: Pião",
             "Amarelo/Ciano: Orientação do pião",
             "ESC: Sair | ESPAÇO: Matrizes"
         ]
